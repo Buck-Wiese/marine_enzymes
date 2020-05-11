@@ -1,0 +1,19 @@
+#!/bin/bash
+#lines=$(wc -l 'OM_test.tsv' | cut -d ' ' -f1)
+#count=0
+#echo $lines
+#echo $count
+
+if test -f 'OM-RGC_aa_seqs.tsv';
+then
+    rm OM-RGC_aa_seqs.tsv
+    echo 'old OM-RGC_aa_seqs.tsv was removed'
+fi
+
+while read dna;do 
+    proteinseq=$(echo "${dna}"| cut -f13 | sed -n -e 's/\(...\)/\1 /gp' | sed -f dna.sed)
+    echo ">${dna}" | cut -f13 --complement >> OM-RGC_aa_seqs.faa   
+    sed -i "$ s/$/\n$proteinseq2/" OM-RGC_aa_seqs.faa;
+#    count=$( expr $count + 1) | progress=$( expr 100 \* $count / $lines) | echo $progress
+done < OM-RGC_seq.release.tsv
+head -2 OM-RGC_aa_seqs.faa
