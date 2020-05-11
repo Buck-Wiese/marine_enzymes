@@ -1,0 +1,23 @@
+#!/bin/bash
+IFS=$'\n'
+
+if [ -d "For_loop_testing" ];
+then
+    rm -r For_loop_testing
+    echo "Directory For_loop_testing was removed"
+fi
+
+mkdir For_loop_testing
+
+for ref_seq in $(cat unique_aligned_catalytic_uniprots.tsv); do
+    filename=$(echo "${ref_seq}_output_file.tsv")
+    groups=$(grep "${ref_seq}" blastp_result_Uniprot_vs_OMsubset)
+    #echo "This is a group: ${groups}" 
+    for i in ${groups}; do
+        info=$(echo ">$i" | awk '{$(NF--)=""; print}')
+        sequence=$(echo "$i" | awk '{print $NF}' )
+        echo "${info}" >> ./For_loop_testing/$filename
+        echo "${sequence}" | sed 's/-//g' >> ./For_loop_testing/$filename;
+    done
+
+done
